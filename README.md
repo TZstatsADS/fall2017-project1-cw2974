@@ -1,7 +1,7 @@
 # Fall 2017
 # Project 1: Does Trump's inaugural speech indicate his second term in office?
 
-![image](https://i.pinimg.com/736x/13/c7/36/13c736ff49e63f31c5117a84efafdaf5--list-of-presidents-vendetta.jpg){width=50%}
+![image](https://i.pinimg.com/736x/13/c7/36/13c736ff49e63f31c5117a84efafdaf5--list-of-presidents-vendetta.jpg)
 
 ### [Project Description](doc/)
 This is the first and only *individual* (as opposed to *team*) this semester. 
