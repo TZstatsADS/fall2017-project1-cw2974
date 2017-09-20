@@ -1,0 +1,316 @@
+
+---
+title: "Does Trump's inaugural speech indicate his second term in office?"
+output:
+  html_notebook: default
+  html_document: default
+---
+
+\
+\
+
+![](https://i.pinimg.com/736x/13/c7/36/13c736ff49e63f31c5117a84efafdaf5--list-of-presidents-vendetta.jpg){width=50%}
+
+\
+
+It is surprising that Donald J Trump became the US president last year. He made hard work of beating Hilary Clinton and has almost finished his first year in office.
+People seem like getting adapted to this new president, but will he win again?
+
+In this analysis, we select presidents' first inaugural speeches to track whether these speeches indicate a second term of office.
+By comparing the different patterns between presidents with 2 or more terms and those who only have 1 term in office, we will get some interesting facts about these groups and we can also use the pattern extracted anticipating the future of Trump.
+
+Also, some people believe that Trump is not that special as a Republican president. When George Bush was in his term, he also did something laughable in public. So, we will take this factor into consideration and further break the data into democratic presidents and republican presidents.
+
+\
+
+
+## 0 - Check and install needed packages. Arrange the data. Load the libraries and functions. 
+```{r, message=FALSE, warning=FALSE, include=FALSE}
+setwd("~/Desktop/5243ads/Fall2017-Proj1-cw2974")
+path<-paste0(getwd(),"/data/InauguralSpeeches/")
+folder.path=paste0(getwd(),"/data/InauguralSpeeches/")
+
+###load packages
+pack.path=paste0(getwd(),"/lib/Package.R")
+source(pack.path)
+
+###processing data
+data.path=paste0(getwd(),"/lib/Data.R")
+source(data.path)
+
+```
+
+\
+This notebook was prepared with the following environmental settings.
+
+
+```{r}
+print(R.version)
+```
+
+
+## 1 - WordCloud
+```{r,fig.height = 8,fig.width = 8}
+###first_term_demo     subset of inaug list
+###first_demo          name
+###tdm_first_demo      tdm file 
+
+
+###WordCloud plot
+
+par(mfrow=c(3,2))
+###all
+#op = par(mfrow=c(1,2),mar = c(0, 0, 3, 0))
+wordcloud(tdm_first$term, tdm_first$count,
+          scale=c(2,0.5),
+          max.words=50,
+          min.freq=1,
+          random.order=FALSE,
+          rot.per=0.3,
+          use.r.layout=T,
+          random.color=FALSE,
+          colors=brewer.pal(9,"Reds"))
+title(main = '1 term Presidents')
+
+wordcloud(tdm_second$term, tdm_second$count,
+          scale=c(2,0.5),
+          max.words=50,
+          min.freq=1,
+          random.order=FALSE,
+          rot.per=0.3,
+          use.r.layout=T,
+          random.color=FALSE,
+          colors=brewer.pal(9,"Purples"))
+title(main = '2 or more term Presidents')
+
+###demo
+wordcloud(tdm_first_demo$term, tdm_first_demo$count,
+          scale=c(2,0.5),
+          max.words=50,
+          min.freq=1,
+          random.order=FALSE,
+          rot.per=0.3,
+          use.r.layout=T,
+          random.color=FALSE,
+          colors=brewer.pal(9,"Reds"))
+title(main = 'Democratics only have one term')
+
+wordcloud(tdm_second_demo$term, tdm_second_demo$count,
+          scale=c(2,0.5),
+          max.words=50,
+          min.freq=1,
+          random.order=FALSE,
+          rot.per=0.3,
+          use.r.layout=T,
+          random.color=FALSE,
+          colors=brewer.pal(9,"Purples"))
+title(main = 'Democratics have two or more terms')
+
+
+###repub
+wordcloud(tdm_first_repub$term, tdm_first_repub$count,
+          scale=c(2,0.5),
+          max.words=50,
+          min.freq=1,
+          random.order=FALSE,
+          rot.per=0.3,
+          use.r.layout=T,
+          random.color=FALSE,
+          colors=brewer.pal(9,"Reds"))
+title(main = 'Republican with only one term')
+
+wordcloud(tdm_second_repub$term, tdm_second_repub$count,
+          scale=c(2,0.5),
+          max.words=50,
+          min.freq=1,
+          random.order=FALSE,
+          rot.per=0.3,
+          use.r.layout=T,
+          random.color=FALSE,
+          colors=brewer.pal(9,"Purples"))
+title(main = 'Republican with two or more terms')
+
+
+```
+\
+All groups have their own special WordClouds, but we still can find some differences between one-term and two-term presidents:
+
+- One-term presidents regardless of party have more words that people are generally more interested in. "employee","business","america" are the words that people generally think will appear in inaugural speeches, so it seems that one-term presidents tend to ingratiate citizens by talking things that are more realistic. 
+- Two-term presidents regardless of party have more words of abstract things. Words like "stricken","productivity" and "minority" do not relate to general citizens' daily life that much, but presidents talk more about those eventually get their second term.
+- It is possible that people will place more hopes on presidents that promise to improve economics or bring more jobs. However, it is not easy to actually achieve economic prosperity as it will always be affected by many complicated factors. People might be disappointed after they finish their first term. On comparison, presidents talk less might gain less pressure.
+
+\
+```{r}
+###trump
+wordcloud(tdm.trump$term, tdm.trump$count,
+          scale=c(2,0.5),
+          max.words=50,
+          min.freq=1,
+          random.order=FALSE,
+          rot.per=0.3,
+          use.r.layout=T,
+          random.color=FALSE,
+          colors=brewer.pal(9,"Oranges"))
+title(main = 'Trump ')
+
+```
+\
+
+Trump has a relatively special WordCloud as he talks a lot about Obama. From the WordCloud, Trump have words like "america", "dreams", ""jobs" indicating that he talks more about how to make America thrive again and how to bring more jobs. Trump gains lots of support from blue-collars who place hope of changing their living status, but it might not benefit him when running for his second term.
+\
+
+
+## 2 - Length of Sentences 
+
+```{r,fig.height = 15,fig.width = 15}
+###sentence.list         sentence list of all file in dir
+###sentence.list.all     sentence list of all file group by one-term and second-term
+###setence.list.demo
+###setence.list.repub
+
+#par(mar=c(4, 11, 2, 2))
+par(mfrow=c(3,1),mar=c(4, 11, 2, 2))
+
+
+###all
+sentence.list.all=filter(sentence.list, File%in%c(first_term$File,second_term$File))
+sentence.list.all$Group=ifelse(sentence.list.all$File%in%first_term$File,"first","second")
+#sentence.list.all$avg.word<-ifelse(sentence.list.all$Group=="first",sentence.list.all$word.count/length(first),sentence.list.all$word.count/length(second))
+
+beeswarm(word.count~Group, 
+         data=sentence.list.all,
+         horizontal = FALSE, 
+         pch=16, col=c("red","purple"),
+         cex=0.8, cex.axis=1, cex.lab=1.2,
+         las=2,ylab="Number of words",
+         xlab="",las=1,
+         main="Inauguartion speeches")
+
+###demo
+sentence.list.demo=filter(sentence.list, File%in%c(first_term_demo$File,second_term_demo$File))
+sentence.list.demo$Group=ifelse(sentence.list.demo$File%in%first_term_demo$File,"first_demo","second_demo")
+#sentence.list.demo$avg.word<-ifelse(sentence.list.demo$Group=="first_demo",sentence.list.demo$word.count/length(first_demo),sentence.list.demo$word.count/length(second_demo))
+beeswarm(word.count~Group, 
+         data=sentence.list.demo,
+         horizontal = FALSE, 
+         pch=16, col=c("red","purple"),
+         cex=0.8, cex.axis=1, cex.lab=1.2,
+         las=2,ylab="Number of words",
+         xlab="",las=1,
+         main="Inauguartion speeches")
+
+###repub
+sentence.list.repub=filter(sentence.list, File%in%c(first_term_repub$File,second_term_repub$File))
+sentence.list.repub$Group=ifelse(sentence.list.repub$File%in%first_term_repub$File,"first_repub","second_repub")
+#sentence.list.repub$avg.word<-ifelse(sentence.list.repub$Group=="first_repub",sentence.list.repub$word.count/length(first_repub),sentence.list.repub$word.count/length(second_repub))
+
+beeswarm(word.count~Group, 
+         data=sentence.list.repub,
+         horizontal = FALSE, 
+         pch=16, col=c("red","purple"),
+         cex=0.8, cex.axis=1, cex.lab=1.2,
+         las=2,ylab="Number of words",
+         xlab="",las=1,
+         main="Inauguartion speeches")
+```
+\
+Only first inaugural speeches are picked. There are 23 one-term presidents **vs** 17 second-term presidents; 9 one-term democratic presidents **vs** 6 two-term democratic presidents; 10 one-term republican presidents **vs** 7 two-term republican presidents. As the number of presidents in each group differ, the analysis become more complicated. However, we can still see some patterns:
+
+- All presidents will have more sentences with length around 20, have similar shape of distribution of sentence length.
+- Two-term presidents tends to have relatively more number of sentence. We can see it through the first plot. Although there are 23 one-term presidents but 17 two-term presidents, there is no significant less sentences in two-term presidents.
+- Two-term democratic presidents have **more even** structure of sentence length compared to one-term democratic presidents. However, two-term republican presidents have **less even** structure compared to one-term republican presidents.
+
+\
+
+
+```{r}
+
+###Trump
+sentence.to=filter(sentence.list, File%in%c("DonaldJTrump","BarackObama"))
+sentence.to$Group=ifelse(sentence.to$File=="DonaldJTrump","Trump","Obama")
+beeswarm(sentence.to$word.count~Group,
+         data=sentence.to,
+         horizontal = FALSE,
+         pch=16, col=brewer.pal(3,"Dark2"),
+         cex=0.8, cex.axis=1, cex.lab=1.2,
+         las=2,ylab="Number of words",
+         xlab="",las=1,
+         main="Inauguartion speeches")
+
+
+```
+\
+Compared to Obama's first-term inaugural speech, Trump has some extra long sentences. Trump has a specially even structure of sentence length which is closest the one-term republican presidents compared to other groups. 
+
+
+\
+
+
+## 3 - Sentiment
+```{r,fig.height = 8,fig.width = 8}
+par(mfrow=c(3,2))
+
+emo.barplot<-function(group,data){
+  par(mar=c(4, 6, 2, 1))
+  emo.means=colMeans(select(subset(data,data$Group==group), anger:trust)>0.01,na.rm=TRUE)
+  barplot(emo.means, las=2, col=brewer.pal(8,"Set3"), horiz=T,border=F,main=group)
+}
+
+
+ ###all
+emo.barplot("first",sentence.list.all)
+emo.barplot("second",sentence.list.all)
+
+###demo
+emo.barplot("first_demo",sentence.list.demo)
+emo.barplot("second_demo",sentence.list.demo)
+
+###repub
+emo.barplot("first_repub",sentence.list.repub)
+emo.barplot("second_repub",sentence.list.repub)
+
+
+```
+\
+
+We can see that the distributions of emotions are similar among those groups:
+
+- The difference between **joy and fear** has its own distinct pattern: From all three groups of comparisons, we can see that presidents with 2 or more terms will have closer amount of emotion cores between joy and fear, which is to say that the difference between these two emotions becomes smaller.
+- Generally, two-term presidents will have more emotion of **sadness compared to surprise**, but one-term republican is an exception. For one-term republican presidents, they have weigh more emotion of sadness.
+
+
+
+\
+
+```{r}
+###Trump
+ emo.means=colMeans(select(subset(sentence.list.all,sentence.list.all$President=="Donald J. Trump"), anger:trust)>0.01,na.rm=TRUE)
+ barplot(emo.means, las=2, col=brewer.pal(8,"Set3"), horiz=T,border=F, main="Donald J. Trump")
+```
+\
+Trump has relatively large difference between joy and fear and less emotion of fear in his inaugural speech, but he has far less emotion of sadness compared to surprise in his speech.
+From the joy and fear pattern, Trump has greater possibility to be a one-term president, but he also gets the change to be two-term president from sadness and surprise pattern.
+
+\
+
+
+## 4 - Conclusion
+\
+
+![](http://d366676l89miqm.cloudfront.net/wp-content/uploads/2015/08/96939_Donald-Trump-youre-fired-1024x597.jpg){width=50%}
+
+\
+\
+We can see that there are some special patterns between one-term presents and two-term president. 
+Only through the analysis above, I will anticipate that Trump **will not** have his second term:
+
+- A Word Cloud more like a one-term democratic president
+- Even structure of word length in sentences more like a one-term republican president
+- Relatively large amount of difference between fear and joy
+
+However, until now there is not yet a strong competitors appearing, and even well-designed polls cannot give a exact anticipation of election result. I believe we cannot make a conclusion by only referencing inaugural speeches, but it is still fun to see this kind of the analysis.
+\
+\
+\
+\
+
