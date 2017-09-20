@@ -11,7 +11,9 @@ Term: Fall 2017
 + Projec title:  Does Trump's inaugural speech indicate his second term in office?
 + This project is conducted by Chenyun Wu
 
-+ Project summary: [a short summary] It is surprising that Donald J Trump became the US president last year. He made hard work of beating Hilary Clinton and has almost finished his first year in office.
++ Project summary: 
+
+It is surprising that Donald J Trump became the US president last year. He made hard work of beating Hilary Clinton and has almost finished his first year in office.
 People seem like getting adapted to this new president, but will he win again?
 
 In this analysis, we select presidents' first inaugural speeches to track whether these speeches indicate a second term of office.
